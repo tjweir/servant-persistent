@@ -8,7 +8,8 @@
 </head>
 
 <body>
-    <h1>Perservant</h1>
+  <h1>Perservant</h1>
+  <h2>Users from UserAPI</h2>
     <label for="name">Name: <input id="name" type="text"></input></label>
     <label for="email">Email: <input id="email" type="email"></input></label>
     <button onclick="addUser()">Add User</button>
@@ -22,16 +23,17 @@
     <label for="pop-name">Name: <input id="pop-name" type="text"</input></label>
     <button onclick="popup()">Popup</button>
 
-    <label for="fname">FName: <input id="fname" type="text"></input></label>
-    <label for="femail">FEmail: <input id="femail" type="email"></input></label>
+    <h2>Friends from FriendAPI</h2>
+    <label for="fname">Friend's Name: <input id="fname" type="text"></input></label>
+    <label for="femail">Friend's Email: <input id="femail" type="email"></input></label>
     <button onclick="addFriend()">Add Friend</button>
     <hr>
     <button onclick="refreshFriends()">Refresh Friends</button>
     <ul id="friend-list">
-        <li>No f loaded yet...</li>
+        <li>No friends loaded yet :( </li>
     </ul>
     <hr>
-    <p>Pop up a specific f name's email!</p>
+    <p>Pop up a specific friends name's email!</p>
     <label for="fpop-name">Name: <input id="fpop-name" type="text"</input></label>
     <button onclick="fpopup()">Popup</button>
 
@@ -129,6 +131,10 @@
                          }
                         );
       }
+      window.onload = function() {
+          refreshUsers();
+          refreshFriends();
+      };
     </script>
 </body>
 
