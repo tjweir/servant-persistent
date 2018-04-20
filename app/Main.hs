@@ -10,6 +10,7 @@ import           System.Remote.Monitoring    (forkServer, serverMetricStore)
 
 import           Api                         (app)
 import           Api.User                    (generateJavaScript)
+import           Api.Friend                  (generateFriendJavaScript)
 import           Config                      (Config (..), Environment (..),
                                               makePool, setLogger)
 import           Logger                      (defaultLogEnv)
@@ -21,10 +22,10 @@ import           Safe                        (readMay)
 main :: IO ()
 main = do
     env  <- lookupSetting "ENV" Development
-    port <- lookupSetting "PORT" 8081
+    port <- lookupSetting "PORT" 8000
     logEnv <- defaultLogEnv
     pool <- makePool env logEnv
-    store <- serverMetricStore <$> forkServer "localhost" 8000
+    store <- serverMetricStore <$> forkServer "localhost" 8888
     waiMetrics <- registerWaiMetrics store
     metr <- M.initializeWith store
     let cfg = Config { configPool = pool
@@ -34,6 +35,7 @@ main = do
         logger = setLogger env
     runSqlPool doMigrations pool
     generateJavaScript
+    generateFriendJavaScript
     run port $ logger $ metrics waiMetrics $ app cfg
 
 -- | Looks up a setting in the environment, with a provided default, and

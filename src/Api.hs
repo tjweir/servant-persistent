@@ -9,21 +9,25 @@ import           Servant              ((:<|>) ((:<|>)), (:~>) (NT),
                                        enter, serve, serveDirectoryFileServer)
 import           Servant.Server
 
+import           Api.Friend           (FriendAPI, friendServer)
 import           Api.User             (UserAPI, userServer)
 import           Config               (AppT (..), Config (..))
 import           Control.Category     ((<<<), (>>>))
+
+
+type CombinedAPI = UserAPI :<|> FriendAPI
 
 -- | This is the function we export to run our 'UserAPI'. Given
 -- a 'Config', we return a WAI 'Application' which any WAI compliant server
 -- can run.
 userApp :: Config -> Application
-userApp cfg = serve (Proxy :: Proxy UserAPI) (appToServer cfg)
+userApp cfg = serve (Proxy :: Proxy CombinedAPI) (appToServer cfg)
 
 -- | This functions tells Servant how to run the 'App' monad with our
 -- 'server' function. @NT 'Handler'@ is a natural transformation that
 -- effectively specialises app base monad to IO
-appToServer :: Config -> Server UserAPI
-appToServer cfg = enter (convertApp cfg >>> NT Handler) userServer
+appToServer :: Config -> Server CombinedAPI
+appToServer cfg = enter (convertApp cfg >>> NT Handler) (userServer :<|> friendServer)
 
 -- | This function converts our @'AppT' m@ monad into the @ExceptT ServantErr
 -- m@ monad that Servant's 'enter' function needs in order to run the
@@ -44,7 +48,7 @@ files = serveDirectoryFileServer "assets"
 -- two different APIs and applications. This is a powerful tool for code
 -- reuse and abstraction! We need to put the 'Raw' endpoint last, since it
 -- always succeeds.
-type AppAPI = UserAPI :<|> Raw
+type AppAPI = CombinedAPI :<|> Raw
 
 appApi :: Proxy AppAPI
 appApi = Proxy

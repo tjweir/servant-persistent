@@ -26,6 +26,10 @@ User json
     name Text
     email Text
     deriving Show Eq
+Friend json
+    name Text
+    email Text
+    deriving Show Eq
 |]
 
 doMigrations :: SqlPersistT IO ()

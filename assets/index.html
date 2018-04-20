@@ -1,70 +1,135 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>perservant</title>
-        <script src="api.js"></script>
-    </head>
-    <body>
-        <h1>Perservant</h1>
-        <label for="name">Name: <input id="name" type="text"></input></label>
-        <label for="email">Email: <input id="email" type="email"></input></label>
-        <button onclick="addUser()">Add User</button>
-        <hr>
-        <button onclick="refreshUsers()">Refresh Users</button>
-        <ul id="user-list">
-            <li>No users loaded yet...</li>
-        </ul>
-        <hr>
-        <p>Pop up a specific user name's email!</p>
-        <label for="pop-name">Name: <input id="pop-name" type="text"</input></label>
-        <button onclick="popup()">Popup</button>
-        <script>
-function refreshUsers() {
-    getUsers(function(users) {
-        var ul = document.getElementById("user-list");
 
-        while (ul.firstChild) {
-            ul.removeChild(ul.firstChild);
+<head>
+    <title>perservant</title>
+    <script src="api.js"></script>
+    <script src="fapi.js"></script>
+</head>
+
+<body>
+    <h1>Perservant</h1>
+    <label for="name">Name: <input id="name" type="text"></input></label>
+    <label for="email">Email: <input id="email" type="email"></input></label>
+    <button onclick="addUser()">Add User</button>
+    <hr>
+    <button onclick="refreshUsers()">Refresh Users</button>
+    <ul id="user-list">
+        <li>No users loaded yet...</li>
+    </ul>
+    <hr>
+    <p>Pop up a specific user name's email!</p>
+    <label for="pop-name">Name: <input id="pop-name" type="text"</input></label>
+    <button onclick="popup()">Popup</button>
+
+    <label for="fname">FName: <input id="fname" type="text"></input></label>
+    <label for="femail">FEmail: <input id="femail" type="email"></input></label>
+    <button onclick="addFriend()">Add Friend</button>
+    <hr>
+    <button onclick="refreshFriends()">Refresh Friends</button>
+    <ul id="friend-list">
+        <li>No f loaded yet...</li>
+    </ul>
+    <hr>
+    <p>Pop up a specific f name's email!</p>
+    <label for="fpop-name">Name: <input id="fpop-name" type="text"</input></label>
+    <button onclick="fpopup()">Popup</button>
+
+    <script>
+        function refreshUsers() {
+            getUsers(function(users) {
+                var ul = document.getElementById("user-list");
+
+                while (ul.firstChild) {
+                    ul.removeChild(ul.firstChild);
+                }
+
+                users.forEach(function(user) {
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(JSON.stringify(user)));
+                    ul.appendChild(li);
+                });
+            }, function(error) {
+                alert("There was an error!");
+                console.log(error);
+            }) 
         }
+      
+      function addUser() {
+          var name = document.getElementById("name").value;
+          var email = document.getElementById("email").value;
+          postUsers(
+              { name: name, email: email },
+              function (response) {
+                  console.log("response received: ", response);
+                  refreshUsers();
+              },
+              function (error) {
+                  alert("Uh oh, error occured!");
+                  console.log(error);
+              }
+          );
+      }
+      
+      function popup() {
+          var name = document.getElementById("pop-name").value;
+          getUsersByName(name,
+                         function (response) {
+                             alert("You requested " + response.email + " and got it!");
+                         },
+                         function (error) {
+                             alert("Woah now, that screwed up.");
+                         }
+                        );
+      }
 
-        users.forEach(function(user) {
-            var li = document.createElement("li");
-            li.appendChild(document.createTextNode(JSON.stringify(user)));
-            ul.appendChild(li);
-        });
-    }, function(error) {
-        alert("There was an error!");
-        console.log(error);
-    }) 
-}
+      function refreshFriends() {
+            getFriends(function(friends) {
+                var ul = document.getElementById("friend-list");
 
-function addUser() {
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    postUsers(
-        { name: name, email: email },
-        function (response) {
-            console.log("response received: ", response);
-            refreshUsers();
-        },
-        function (error) {
-            alert("Uh oh, error occured!");
-            console.log(error);
+                while (ul.firstChild) {
+                    ul.removeChild(ul.firstChild);
+                }
+
+                friends.forEach(function(friend) {
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(JSON.stringify(friend)));
+                    ul.appendChild(li);
+                });
+            }, function(error) {
+                alert("There was an error!");
+                console.log(error);
+            }) 
         }
-    );
-}
+      
+      function addFriend() {
+          var fname = document.getElementById("fname").value;
+          var femail = document.getElementById("femail").value;
+          postFriends(
+              { name: fname, email: femail },
+              function (response) {
+                  console.log("response received: ", response);
+                  refreshUsers();
+              },
+              function (error) {
+                  alert("Uh oh, error occured!");
+                  console.log(error);
+              }
+          );
+      }
+      
+      function fpopup() {
+          var name = document.getElementById("fpop-name").value;
+          getFriendsByName(name,
+                         function (response) {
+                             alert("You requested " + response.email + " and got it!");
+                         },
+                         function (error) {
+                             alert("Woah now, that screwed up.");
+                         }
+                        );
+      }
+    </script>
+</body>
 
-function popup() {
-    var name = document.getElementById("pop-name").value;
-    getUsersByName(name,
-        function (response) {
-            alert("You requested " + response.email + " and got it!");
-        },
-        function (error) {
-            alert("Woah now, that screwed up.");
-        }
-    );
-}
-        </script>
-    </body>
 </html>

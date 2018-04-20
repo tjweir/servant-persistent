@@ -49,7 +49,8 @@ library
         Config
       , Models
       , Api
-      , Api.User
+                  , Api.User
+                  , Api.Friend
       , Logger
     build-depends:
         base >= 4.9 && < 5.0
